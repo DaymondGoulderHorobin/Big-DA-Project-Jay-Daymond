@@ -1,0 +1,55 @@
+//Cassandra Code
+
+CREATE KEYSPACE IF NOT EXISTS Hackernews
+   ... WITH replication = {'class' : 'SimpleStrategy', 'replication_factor' :3};
+   
+  USE Hackernews;
+  
+	CREATE TABLE IF NOT EXISTS Stories (
+		"id" text,
+		"by" text,
+		"score" text,
+		"time" text,
+		"time_ts" timestamp,
+		"title" text,
+		"url" text,
+		"text" text,
+		"deleted" boolean,
+		"dead" boolean,
+		"descendants" text,
+		"author" text,
+		PRIMARY KEY ("id") 
+		);
+
+
+//First Run, you will need to change the path of the csv by going to the properties and replacing it.
+		
+COPY Stories ("id","by","score","time","time_ts","title","url","text","deleted","dead","descendants","author")
+FROM 'D:\Dataanalytics\Hackernews\datanew.csv'
+WITH HEADER = TRUE AND DELIMITER ='|' AND NULL = 'N/A';
+
+//Second Run, Skips the first 700,000 as it seems to struggle at this point
+
+COPY Stories ("id","by","score","time","time_ts","title","url","text","deleted","dead","descendants","author")
+FROM 'D:\Dataanalytics\Hackernews\datanew.csv'
+WITH HEADER = TRUE AND DELIMITER ='|' AND NULL = 'N/A' AND SKIPROWS = '700000';
+
+//Third Run 
+
+COPY Stories ("id","by","score","time","time_ts","title","url","text","deleted","dead","descendants","author")
+FROM 'D:\Dataanalytics\Hackernews\datanew.csv'
+WITH HEADER = TRUE AND DELIMITER ='|' AND NULL = 'N/A' AND SKIPROWS = '1100000';
+
+
+//etc
+
+COPY Stories ("id","by","score","time","time_ts","title","url","text","deleted","dead","descendants","author")
+FROM 'D:\Dataanalytics\Hackernews\datanew.csv'
+WITH HEADER = TRUE AND DELIMITER ='|' AND NULL = 'N/A' AND SKIPROWS = '1400000';
+
+
+//That gets enough in but keep Skipping rows to get more if needed 
+
+//Materialized Views
+
+
