@@ -52,4 +52,52 @@ WITH HEADER = TRUE AND DELIMITER ='|' AND NULL = 'N/A' AND SKIPROWS = '1400000';
 
 //Materialized Views
 
+CREATE MATERIALIZED VIEW storyscores AS
+	SELECT "id", "by", "score", "text", "time_ts" FROM Stories
+	WHERE "score" IS NOT NULL AND "time_ts" IS NOT NULL AND "by" IS NOT NULL AND "text" IS NOT NULL
+	PRIMARY KEY ("id", "score");
+	
+	
 
+
+//Not working atm so is an attempt	
+CREATE MATERIALIZED VIEW alivestories AS
+	SELECT "id", "by", "score", "text", "time_ts", "deleted" FROM Stories
+	WHERE "score" IS NOT NULL AND "time_ts" IS NOT NULL AND "by" IS NOT NULL AND "text" IS NOT NULL AND "deleted" IS NOT NULL
+	PRIMARY KEY ("id", "deleted");
+	
+	
+	
+	
+	
+
+//Use this to start over if needed	
+DROP MATERIALIZED VIEW IF EXISTS storyscores;	
+	
+	
+	
+	
+	
+	
+	
+	
+QUERIES
+
+//Select Stories made by a particular user, shows important information, example using a random user or score
+
+SELECT "id", "by", "score", "text", "time_ts" FROM storyscores
+	WHERE "by" = 'frade33'
+	LIMIT 10
+	ALLOW FILTERING;
+
+
+//Select Stories that have the highest score	
+	
+SELECT "id", "by", "score", "text" FROM storyscores
+	ORDER BY "score" DESC
+	ALLOW FILTERING;
+	
+	
+
+
+	
