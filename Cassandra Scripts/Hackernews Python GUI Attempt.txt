@@ -1,0 +1,90 @@
+//Python GUI 
+
+from Tkinter import *
+import tkMessageBox
+import pandas as pd
+impprt numpy as np
+import time
+import datetime
+import re
+import os
+from cassandra.cluster import Cluster
+
+cluster = Cluster()
+session = cluster.connect()
+session.execute('USE hackernews')
+
+
+#class
+
+class App(object):
+    def __init__(self, window):
+    	self.ip=ip
+		self.user=user
+		self.db=db
+        window.wm_title("Cassandra Hackernews Interface")
+		
+		self.current_row=0
+		
+		self.runtag_label = Label (window, text= "Specify Username to search: ")
+		
+        self.runtag_label.grid(row=self.current_row,column=0)
+		
+        self.runtag_text  = StringVar()
+		
+        self.runtag_entry = Entry(window, textvariable=self.runtag_text)
+		
+        self.runtag_entry.grid(row=self.current_row,column=1)
+		
+        self.current_row += 1
+		
+		
+		#Send Query Button
+		self.query_button = Button (window, text="Send Query")
+		
+        self.query_button.grid(row=self.current_row,column=0,columnspan=2)
+		
+        self.current_row += 1
+		
+		
+		self.querystatus  = Label(window, text='')
+		
+        self.querystatus.grid(row=self.current_row,column=0,columnspan=2)
+
+        self.current_row += 1
+		
+	def sendQuery(self):
+		run_tag = self.runtag_text.get()
+		
+		else:
+		
+			run_tag_string = ''
+			
+			
+			if run_tag != '':
+				run_tag_string = 'AND run_tag = "%s"' %(run_tag)
+				
+			self.query = "rows = session.execute('SELECT "id, "by", "score", "time_ts", "text"  FROM stories WHERE "by" =  '
+				
+				
+			
+			rows = session.execute('SELECT "id, "by", "score", "time_ts", "text"  FROM stories WHERE "by" = 'ips'
+		
+		
+
+
+		
+		
+		
+def main():
+	window= Tk()
+	start= App(window)
+	window.mainloop()
+
+
+	
+	
+if __name__ == "__main__":
+    main()
+
+
