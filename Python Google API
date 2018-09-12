@@ -1,1 +1,80 @@
 Python code of how we retrieved the data from google. At first needed to connect to Google API.
+As a test we first tried to retrieve data of "full" dataset, and we got the whole dataset uploaded to Big Query so we moved to "Story" dataset.
+
+
+Code:
+
+
+from google.cloud import bigquery
+>>> client = bigquery.Client()
+>>> hn_dataset_ref = client.dataset('hacker_news', project='bigquery-public-data')
+
+>>> type(hn_dataset_ref)
+
+<class 'google.cloud.bigquery.dataset.DatasetReference'>
+>>> hn_dset = client.get_dataset(hn_dataset_ref)
+
+>>> type(hn_dset)
+
+<class 'google.cloud.bigquery.dataset.Dataset'>
+>>> [x.table_id for x in client.list_tables(hn_dset)]
+
+['comments', 'full', 'full_201510', 'stories']
+>>> hn_full = client.get_table(hn_dset.table('full'))
+
+>>> type(hn_full)
+
+<class 'google.cloud.bigquery.table.Table'>
+.
+>>> [command for command in dir(hn_full) if not command.startswith('_')]
+
+['clustering_fields', 'created', 'dataset_id', 'description', 'encryption_configuration', 'etag', 'expires', 'external_data_configuration', 'friendly_name', 'from_api_repr', 'from_string', 'full_table_id', 'labels', 'location', 'modified', 'num_bytes', 'num_rows', 'partition_expiration', 'partitioning_type', 'path', 'project', 'reference', 'schema', 'self_link', 'streaming_buffer', 'table_id', 'table_type', 'time_partitioning', 'to_api_repr', 'view_query', 'view_use_legacy_sql']
+>>> hn_full.schema
+
+[SchemaField('by', 'STRING', 'NULLABLE', "The username of the item's author.", ()), SchemaField('score', 'INTEGER', 'NULLABLE', 'Story score', ()), SchemaField('time', 'INTEGER', 'NULLABLE', 'Unix time', ()), SchemaField('timestamp', 'TIMESTAMP', 'NULLABLE', 'Timestamp for the unix time', ()), SchemaField('title', 'STRING', 'NULLABLE', 'Story title', ()), SchemaField('type', 'STRING', 'NULLABLE', 'Type of details (comment, comment_ranking, poll, story, job, pollopt)', ()), SchemaField('url', 'STRING', 'NULLABLE', 'Story url', ()), SchemaField('text', 'STRING', 'NULLABLE', 'Story or comment text', ()), SchemaField('parent', 'INTEGER', 'NULLABLE', 'Parent comment ID', ()), SchemaField('deleted', 'BOOLEAN', 'NULLABLE', 'Is deleted?', ()), SchemaField('dead', 'BOOLEAN', 'NULLABLE', 'Is dead?', ()), SchemaField('descendants', 'INTEGER', 'NULLABLE', 'Number of story or poll descendants', ()), SchemaField('id', 'INTEGER', 'NULLABLE', "The item's unique id.", ()), SchemaField('ranking', 'INTEGER', 'NULLABLE', 'Comment ranking', ())]
+>>> schema_subset = [col for col in hn_full.schema if col.name in ('by', 'title', 'time')]
+
+>>> results = [x for x in client.list_rows(hn_full, start_index=100, selected_fields=schema_subset, max_results=10)]
+>>> print(results)
+
+[Row(('marram', 1244003347, ''), {'by': 0, 'time': 1, 'title': 2}), Row(('skyland', 1522873153, ''), {'by': 0, 'time': 1, 'title': 2}), Row(('Daniel_Newby', 1345322109, ''), {'by': 0, 'time': 1, 'title': 2}), Row(('jasonlfunk', 1408922102, ''), {'by': 0, 'time': 1, 'title': 2}), Row(('raju', 1223249256, 'Rumor: Nvidia-powered MacBooks on October 14th'), {'by': 0, 'time': 1, 'title': 2}), Row(('daegloe', 1446946482, ''), {'by': 0, 'time': 1, 'title': 2}), Row(('Strika', 1298574780, 'Force is strong in this one'), {'by': 0, 'time': 1, 'title': 2}), Row(('burntrelish1273', 1505595257, '“Double Pigeon” Chinese Typewriter [video]'), {'by': 0, 'time': 1, 'title': 2}), Row(('andrewfong', 1381458864, ''), {'by': 0, 'time': 1, 'title': 2}), Row(('casca', 1351644810, ''), {'by': 0, 'time': 1, 'title': 2})]
+>>> 
+>>> 
+>>> 
+>>> for i in results:
+    print(dict(i))
+
+    
+{'by': 'marram', 'time': 1244003347, 'title': ''}
+{'by': 'skyland', 'time': 1522873153, 'title': ''}
+{'by': 'Daniel_Newby', 'time': 1345322109, 'title': ''}
+{'by': 'jasonlfunk', 'time': 1408922102, 'title': ''}
+{'by': 'raju', 'time': 1223249256, 'title': 'Rumor: Nvidia-powered MacBooks on October 14th'}
+{'by': 'daegloe', 'time': 1446946482, 'title': ''}
+{'by': 'Strika', 'time': 1298574780, 'title': 'Force is strong in this one'}
+{'by': 'burntrelish1273', 'time': 1505595257, 'title': '“Double Pigeon” Chinese Typewriter [video]'}
+{'by': 'andrewfong', 'time': 1381458864, 'title': ''}
+{'by': 'casca', 'time': 1351644810, 'title': ''}
+>>> def estimate_gigabytes_scanned(query, bq_client):
+    # see https://cloud.google.com/bigquery/docs/reference/rest/v2/jobs#configuration.dryRun
+    my_job_config = bigquery.job.QueryJobConfig()
+    my_job_config.dry_run = True
+    my_job = bq_client.query(query, job_config=my_job_config)
+    BYTES_PER_GB = 2**30
+    return my_job.total_bytes_processed / BYTES_PER_GB
+
+>>> BYTES_PER_GB = 2**30
+hn_full.num_bytes / BYTES_PER_GB
+SyntaxError: multiple statements found while compiling a single statement
+>>> 
+>>> BYTES_PER_GB = 2**30
+>>> hn_full.num_bytes / BYTES_PER_GB
+
+6.5888814916834235
+>>> estimate_gigabytes_scanned("SELECT Id FROM `bigquery-public-data.hacker_news.stories`", client)
+
+0.01460171490907669
+>>> estimate_gigabytes_scanned("SELECT * FROM `bigquery-public-data.hacker_news.stories`", client)
+
+0.3932693460956216
+>>> 
