@@ -1,0 +1,19 @@
+This was failed, but as we tried it so including within this project
+
+
+
+from urllib.request import urlopen as uReq
+from bs4 import BeautifulSoup as soup
+my_url = 'https://www.kaggle.com/hacker-news/hacker-news'
+
+#grabbing page content
+
+uClient = uReq(my_url)
+page_html = uClient.read()
+uClient.close()
+#html parser
+page_soup = soup(page_html, "html.parser")
+page_soup.title
+
+#grabs rows
+dataset = page_soup.findAll("tr",{"class":"TableBody-kSbjpE jGqIxa"})
