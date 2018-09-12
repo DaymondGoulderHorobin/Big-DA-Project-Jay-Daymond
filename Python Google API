@@ -4,7 +4,7 @@ As a test we first tried to retrieve data of "full" dataset, and we got the whol
 
 Code:
 
-
+```
 from google.cloud import bigquery
 >>> client = bigquery.Client()
 >>> hn_dataset_ref = client.dataset('hacker_news', project='bigquery-public-data')
@@ -78,3 +78,4 @@ SyntaxError: multiple statements found while compiling a single statement
 
 0.3932693460956216
 >>> 
+```
