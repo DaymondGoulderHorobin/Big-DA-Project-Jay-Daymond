@@ -1,0 +1,9 @@
+Week 2 – We decided that we would focus on learning the architecture of Cassandra before attempting to complete the project
+Week 3 – We move to begin Data Retrival.  Daymond would attempt Bigquery, Sajan would attempt to use the Kaggle Kernal, Jay would use Kaggle API.
+Week 4 -  meet and discuss results of data retrieval.  The Kaggle API failed, the Kaggle Kernal was not successful atm, Bigquery was somewhat successful but not finished as we could only get some of the data.  Jay resolved to completing the retrieval while Daymond moved on to constructing the Keyspaces and Sajan was assigned Queries at that time.
+
+Week 6 – Entire Dataset was retrived by Jay and therefore Daymond was assigned to upload the data to Cassandra through a number of means, Sajan was still working on Queries and Jay began working on getting Docker functioning with nodes, if successful we would copy the code that Daymond made into Docker on Jay’s machine.
+
+Week 7 – Discussed queries and the data approach, Docker was currently unsuccessful so we decided to leave it for now due to time constraints and all of us focused on the Queries to get our baselines done.  Daymond attempted a bit of API but due to limited coding skills only managed to get fixed queries done.
+
+Week 8 – met before the final presentation to discuss the theory data model which was completed by Sajan and cover off all of our bases as much as we could do.  Then we would finish and hand in.
